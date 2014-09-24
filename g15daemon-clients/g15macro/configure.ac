@@ -1,10 +1,8 @@
 AC_INIT(g15macro,[1.0.4], [mlampard@users.sf.net])
 
-PACKAGE=g15macro
-VERSION=1.0.4
 AC_PREFIX_DEFAULT(/usr)
 AC_CONFIG_AUX_DIR(config)
-AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
+AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([config.h])
 
 AC_PROG_CC
