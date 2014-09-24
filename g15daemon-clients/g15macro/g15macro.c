@@ -42,6 +42,7 @@
 #include <sys/time.h>
 #include <config.h>
 #include <X11/Xlib.h>
+#include <X11/XKBlib.h>
 #include <stdarg.h>
 #include <math.h>
 #include <ctype.h>
@@ -539,11 +540,10 @@ void fake_keyevent(int keycode,int keydown,unsigned long modifiers){
     XKeyEvent event;
     Window current_focus;
     int dummy = 0;
-    int key = 0;
 
     pthread_mutex_lock(&x11mutex);
       XGetInputFocus(dpy,&current_focus, &dummy);
-      key = XKeycodeToKeysym(dpy,keycode,0);
+      XkbKeycodeToKeysym(dpy,keycode,0,0);
       if(keydown)
         event.type=KeyPress;
       else
@@ -665,7 +665,7 @@ void macro_playback(unsigned long keystate)
                           mstates[mkey_state]->gkeys[gkey].keysequence.recorded_keypress[i].modifiers);
 
         pthread_mutex_lock(&x11mutex);
-        key = XKeycodeToKeysym(dpy,mstates[mkey_state]->gkeys[gkey].keysequence.recorded_keypress[i].keycode,0);
+        key = XkbKeycodeToKeysym(dpy,mstates[mkey_state]->gkeys[gkey].keysequence.recorded_keypress[i].keycode,0,0);
         pthread_mutex_unlock(&x11mutex);
         g15macro_log("\t%s %s\n",XKeysymToString(key),mstates[mkey_state]->gkeys[gkey].keysequence.recorded_keypress[i].pressed?"Down":"Up");
 
@@ -888,8 +888,7 @@ void loadMultiConfig()
 
 	configs[0] = malloc(sizeof(configs_t));
 
-	configs[0]->configfile = malloc(128);
-	memset(configs[0]->configfile,0,sizeof(configs[0]->configfile));
+	configs[0]->configfile = calloc(1, 128);
 	strcpy(configs[0]->configfile, "g15macro.conf");
 	configs[0]->confver = 0;
 	currConfig = 0;
@@ -1187,7 +1186,7 @@ void xkey_handler(XEvent *event) {
 
 	if(event->type==KeyRelease){ // we only do keyreleases for some keys
 	pthread_mutex_lock(&x11mutex);
-		KeySym key = XKeycodeToKeysym(dpy, keycode, 0);
+		KeySym key = XkbKeycodeToKeysym(dpy, keycode, 0, 0);
 	pthread_mutex_unlock(&x11mutex);
 		switch (key) {
 			case XK_Shift_L:
@@ -1229,7 +1228,7 @@ void xkey_handler(XEvent *event) {
 			pthread_mutex_lock(&x11mutex);
 			XGrabKeyboard(dpy, root_win, True, GrabModeAsync, GrabModeAsync, CurrentTime);
 			XFlush(dpy);
-			strcpy((char*)keytext,XKeysymToString(XKeycodeToKeysym(dpy, keycode, 0)));
+			strcpy((char*)keytext,XKeysymToString(XkbKeycodeToKeysym(dpy, keycode, 0, 0)));
 			pthread_mutex_unlock(&x11mutex);
 			if(0==strcmp((char*)keytext,"space"))
 				strcpy((char*)keytext," ");
