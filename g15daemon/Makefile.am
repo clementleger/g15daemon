@@ -2,7 +2,7 @@ LLIBDIR=@LIBDIR@
 
 
 SUBDIRS =  libg15daemon_client g15daemon
-AM_CFLAGS =  -I$(top_srcdir)/libg15daemon_client -I$(top_srcdir)/g15daemon
+AM_CPPFLAGS =  -I$(top_srcdir)/libg15daemon_client -I$(top_srcdir)/g15daemon
 EXTRA_DIST = debian contrib Documentation g15daemon_xmms lang-bindings patches rpm README.usage FAQ LICENSE
 
 docdir = $(prefix)/share/doc/$(PACKAGE)-$(VERSION)
